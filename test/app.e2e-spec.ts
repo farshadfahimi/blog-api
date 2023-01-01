@@ -1,24 +1,59 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { INestApplication, ValidationPipe } from "@nestjs/common"
+import { Test } from "@nestjs/testing"
+import { AppModule } from "../src/app.module"
+import * as pactom from 'pactum'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { AuthDto } from "../src/auth/dto"
+import { connect, Connection } from "mongoose"
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication;
+describe('App e2e', () => {
+  let app: INestApplication
+  let mongod: MongoMemoryServer
+  let mongoConnection: Connection
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+  beforeAll(async () => {
+    mongod = await MongoMemoryServer.create()
+    const uri = mongod.getUri()
+    mongoConnection = (await connect(uri)).connection
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-  });
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        AppModule
+      ]
+    }).compile()
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
-});
+    app = moduleRef.createNestApplication()
+
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true
+    }))
+
+    await app.init()
+
+    await app.listen(3333)
+  })
+
+  afterAll(async () => {
+    await mongoConnection.dropDatabase()
+    await mongoConnection.close()
+    await mongod.stop()
+
+    app.close()
+  })
+
+  describe('Auth', () => {
+    describe('Signup', () => {
+      it('should signup', () => {
+        const dto: AuthDto = {
+          email: 'test2@gmail.com',
+          password: '123'
+        }
+        return pactom.spec().post('http://localhost:3333/auth/signup').withBody(dto).expectStatus(201)
+      })
+    })
+
+    // describe('Signin', () => {
+
+    // })
+  })
+})
