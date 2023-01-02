@@ -8,6 +8,10 @@ import { StoreCategoryDto } from "./dto";
 @Injectable()
 export class CategoryRepository extends EntityRepository<CategoryDocumnet> {
   constructor(
-    @InjectModel(Category.name) category: Model<CategoryDocumnet>
+    @InjectModel(Category.name) private readonly category: Model<CategoryDocumnet>
   ) { super(category) }
+
+  async list() :Promise<CategoryDocumnet[]> {
+    return this.category.find()
+  }
 }

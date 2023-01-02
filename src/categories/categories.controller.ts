@@ -8,6 +8,11 @@ import { CreateCategoriesDto } from './dto';
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
+  @Get('/')
+  async list() :Promise<CategoryDocumnet[]> {
+    return await this.categoriesService.list()
+  }
+
   @Get('/:id')
   async show(@Param('id') id: string) :Promise<CategoryDocumnet> {
     return await this.categoriesService.findOne(id)

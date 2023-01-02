@@ -7,6 +7,10 @@ import { CreateCategoriesDto } from './dto';
 export class CategoriesService {
   constructor(private categoryRepo: CategoryRepository) {}
 
+  async list() :Promise<CategoryDocumnet[]> {
+    return await this.categoryRepo.list()
+  }
+
   async findOne(id: string) :Promise<CategoryDocumnet> {
     return await this.categoryRepo.findById(id)
   }
