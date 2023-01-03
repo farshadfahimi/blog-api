@@ -65,6 +65,12 @@ export class Post extends LikeAbstract {
   approved?: User
 
   @Prop({
+    type: Date,
+    default: null,
+  })
+  approvedAt?: Date
+
+  @Prop({
     type: [{ type: Types.ObjectId, ref: 'Tag' }],
     default: []
   })
@@ -94,6 +100,10 @@ PostSchema.virtual('link').get(function(this: PostDocument) {
   return `/${this.slug}`
 })
 
+PostSchema.virtual('isApproved').get(function(this: PostDocument) {
+  return !!this.approved
+})
+
 PostSchema.pre('save', function(this: PostDocument, next: Function) {
   if (!this.slug)
     this.slug = this.title
@@ -102,6 +112,11 @@ PostSchema.pre('save', function(this: PostDocument, next: Function) {
     this.slug = slugify(this.slug)
 
   next()
+})
+
+PostSchema.pre('save', function (this: PostDocument, next: Function) {
+  if (this.isModified('approved'))
+    this.approvedAt = this.approved ? new Date() : null
 })
 
 LikeFactory(PostSchema)

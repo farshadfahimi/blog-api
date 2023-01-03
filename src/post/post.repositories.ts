@@ -31,18 +31,18 @@ export class PostRepositories extends EntityRepository<PostDocument> {
   }
 
   async findNewest() :Promise<PostDocument[]> {
-    return this.post.find({}).populate(this.defaultPopulates).sort({ created_at: -1 }).limit(this.defaultLimit)
+    return this.post.find({ approvedAt: { $ne: null } }).populate(this.defaultPopulates).sort({ created_at: -1 }).limit(this.defaultLimit)
   }
 
   async findLongest() :Promise<PostDocument[]> {
-    return this.post.find({}).populate(this.defaultPopulates).sort({ body: -1 }).limit(this.defaultLimit)
+    return this.post.find({ approvedAt: { $ne: null } }).populate(this.defaultPopulates).sort({ body: -1 }).limit(this.defaultLimit)
   }
 
   async findShortest() :Promise<PostDocument[]> {
-    return this.post.find({}).populate(this.defaultPopulates).sort({ body: 1 }).limit(this.defaultLimit)
+    return this.post.find({ approvedAt: { $ne: null } }).populate(this.defaultPopulates).sort({ body: 1 }).limit(this.defaultLimit)
   }
 
   async mostChallenge() :Promise<PostDocument[]> {
-    return this.post.find({}).populate(this.defaultPopulates).sort({ comments: -1 }).limit(this.defaultLimit)
+    return this.post.find({ approvedAt: { $ne: null } }).populate(this.defaultPopulates).sort({ comments: -1 }).limit(this.defaultLimit)
   }
 }
