@@ -6,7 +6,7 @@ import { ReplyDocument } from "./reply.schema";
 
 @Injectable()
 export class ReplyRepository extends EntityRepository<ReplyDocument> {
-  constructor(@InjectModel('Reply') replyModel: Model<ReplyDocument>) {
-    super(replyModel)
-  }
+  constructor(
+    @InjectModel('Reply') protected replyModel: Model<ReplyDocument>
+  ) { super(replyModel) }
 }

@@ -7,6 +7,7 @@ import { JWTGuarad } from '../auth/guard';
 import { CreatePostDto, UpdatepostDto } from './dto';
 import { PostService } from './post.service';
 import { diskStorage } from 'multer';
+import { CreateReplyDto } from './replies/dto';
 
 @Controller('posts')
 export class PostController {
@@ -68,21 +69,18 @@ export class PostController {
     return post
   }
 
-  // @Post('/:id/comments')
-  // @UseGuards(JWTGuarad)
-  // async storeComment(@Param('id') id: string, @Body() dto: CreateCommentDto, @GetUser() user: UserDocument) {
-  //   const comment = await this.postService.addComments(id, dto, user)
+  @Get('/:id/replies')
+  async findReplies(@Param('id') id: string) :Promise<any[]> {
+    const replies = this.postService.findReplies(id)
 
-  //   return comment
-  // }
+    return replies
+  }
 
-  // @Patch('/:id/bookmarks')
-  // async addBookmark(@GetUser() user: UserDocument, @Param('id') id: string) {
-  //   await this.postService.addBookmark(user, id)
-  // }
+  @Post('/:id/replies')
+  @UseGuards(JWTGuarad)
+  async storeComment(@Param('id') id: string, @Body() dto: CreateReplyDto, @GetUser() user: UserDocument) {
+    const comment = await this.postService.addReply(id, dto, user)
 
-  // @Delete('/:id/bookmarks')
-  // async removeBookmark(@GetUser() user: UserDocument, @Param('id') id: string) {
-  //   await this.postService.removeBookmark(user, id)
-  // }
+    return comment
+  }
 }

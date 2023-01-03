@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from "mongoose";
 import { Factory } from "nestjs-seeder";
-import { Category } from "src/categories/categories.schema";
+import { CategoryDocumnet } from "src/categories/categories.schema";
 import { slugify } from "src/helpers";
 import { LikeAbstract } from "src/like/like.abstract";
 import { LikeFactory } from "src/like/like.factory";
 import { Tag } from "src/tag/tag.schema";
-import { User } from "src/user/user.schema";
-import { Reply } from "./replies/reply.schema";
+import { User, UserDocument } from "src/user/user.schema";
+import { ReplyDocument } from "./replies/reply.schema";
 
 export type PostDocument = Post & Document
 
@@ -49,13 +49,13 @@ export class Post extends LikeAbstract {
     type: Types.ObjectId,
     ref: 'Category'
   })
-  category: Category
+  category: CategoryDocumnet
 
   @Prop({
     type: Types.ObjectId,
     ref: 'User',
   })
-  auther: User
+  auther: UserDocument
 
   @Prop({
     type: Types.ObjectId,
@@ -74,7 +74,7 @@ export class Post extends LikeAbstract {
     type: [{ type: Types.ObjectId, ref: 'Reply' }],
     default: [],
   })
-  replies?: Reply[]
+  replies?: ReplyDocument[]
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post)

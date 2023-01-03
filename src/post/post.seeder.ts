@@ -4,6 +4,7 @@ import { DataFactory, Seeder } from "nestjs-seeder";
 import { Category, CategoryDocumnet } from "src/categories/categories.schema";
 import { User, UserDocument } from "src/user/user.schema";
 import { Post, PostDocument } from "./post.schema";
+import { Reply, ReplyDocument } from "./replies/reply.schema";
 
 export class PostSeeder implements Seeder {
   constructor(
@@ -13,11 +14,8 @@ export class PostSeeder implements Seeder {
   ) {}
 
   async seed(): Promise<any> {
-    const users = DataFactory.createForClass(User).generate(1)
-    const categories = DataFactory.createForClass(Category).generate(1)
-    const user: User = await this.user.create(users[0])
-    const category: Category = await this.category.create(categories[0])
-
+    const user: User = await this.user.create(DataFactory.createForClass(User).generate(1)[0])
+    const category: Category = await this.category.create(DataFactory.createForClass(Category).generate(1)[0])
     const posts = DataFactory.createForClass(Post).generate(5)
 
     for (const post of posts) {

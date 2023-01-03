@@ -2,16 +2,13 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from "mongoose";
 import { Factory } from "nestjs-seeder";
 import * as argon from 'argon2'
-import { Post } from "src/post/post.schema";
+import { Post, PostDocument } from "src/post/post.schema";
 
 export type UserDocument = User & Document
 
 @Schema({
   timestamps: true,
   toJSON: {
-    transform(_doc, ret) {
-      delete ret.password
-    },
     virtuals: true
   }
 })
@@ -33,14 +30,14 @@ export class User {
   email: string
 
   @Prop()
-  @Factory((faker) => faker.internet.password())
+  @Factory((faker) => faker.lorem.words(1))
   password: string
 
   @Prop({
-    type: [{ type: Types.ObjectId, ref: Post.name }],
+    type: [{ type: Types.ObjectId, ref: 'Post' }],
     default: []
   })
-  bookmarks?: Post[]
+  bookmarks?: PostDocument[]
 
   @Prop({ default: Date.now() })
   createdAt: Date

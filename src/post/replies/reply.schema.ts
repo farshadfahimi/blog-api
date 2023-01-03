@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types, Document } from "mongoose";
+import { Factory } from "nestjs-seeder";
 import { LikeAbstract } from "src/like/like.abstract";
 import { LikeFactory } from "src/like/like.factory";
 import { UserDocument } from "src/user/user.schema";
@@ -16,6 +17,7 @@ export class Reply extends LikeAbstract {
   @Prop({
     required: true
   })
+  @Factory((faker) => faker.lorem.text)
   body: string
 
   @Prop({

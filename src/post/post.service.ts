@@ -3,6 +3,7 @@ import { CreatePostDto, UpdatepostDto } from "./dto";
 import { UserDocument } from "src/user/user.schema";
 import { ListTransformer } from "./transformer";
 import { PostRepositories } from "./post.repositories";
+import { CreateReplyDto } from "./replies/dto";
 import { ReplyRepository } from "./replies/reply.respository";
 
 @Injectable()
@@ -73,36 +74,22 @@ export class PostService {
     return post.toJSON()
   }
 
-  // async addComments(id: string, dto: CreateReplyDto, user: UserDocument) {
-  //   const post = await this.postRepo.findById(id)
-  //   const reply = await this.replyRepo.create({ ...dto, auther: user })
+  async findReplies(id: string) {
+    const post = await this.postRepo.findById(id)
 
-  //   post.replies.push(reply)
+    const { replies } = await post.populate('replies')
 
-  //   await this.postRepo.updateReplies(id, post.replies)
+    return replies
+  }
 
-  //   return reply
-  // }
+  async addReply(id: string, dto: CreateReplyDto, user: UserDocument) {
+    const post = await this.postRepo.findById(id)
+    const reply = await this.replyRepo.create({ ...dto, auther: user })
 
-  // async addBookmark(user: UserDocument, id: string) {
-  //   const post = await this.model.findById(id)
+    post.replies.push(reply)
 
-  //   if (user.bookmarks && !user.bookmarks.includes(post.id)) {
-  //     user.bookmarks.push(post.id)
-  //   } else {
-  //     user.bookmarks = [post.id]
-  //   }
+    await this.postRepo.updateReplies(id, post.replies)
 
-  //   await user.save()
-  // }
-
-  // async removeBookmark(user: UserDocument, id: string) {
-  //   const post = await this.model.findById(id)
-
-  //   if (user.bookmarks) {
-  //     user.bookmarks.splice(user.bookmarks.indexOf(post.id), 1)
-
-  //     await user.save()
-  //   }
-  // }
+    return reply
+  }
 }
