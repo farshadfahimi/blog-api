@@ -17,12 +17,12 @@ export class PostController {
     return await this.postService.newestPost()
   }
 
-  @Get('/short')
+  @Get('/shortest')
   async shortPost() {
     return await this.postService.shortestPost()
   }
 
-  @Get('/long')
+  @Get('/longest')
   async longPost() {
     return await this.postService.longestPost()
   }
