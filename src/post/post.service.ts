@@ -77,7 +77,10 @@ export class PostService {
   async findReplies(id: string) {
     const post = await this.postRepo.findById(id)
 
-    const { replies } = await post.populate('replies')
+    const { replies } = await post.populate({
+      path: 'replies',
+      match: { approvedBy: { $ne: null } }
+    })
 
     return replies
   }

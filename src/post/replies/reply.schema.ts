@@ -22,9 +22,21 @@ export class Reply extends LikeAbstract {
 
   @Prop({
     type: Types.ObjectId,
-    ref: 'user'
+    ref: 'User'
   })
   auther: UserDocument
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: 'User',
+    default: null
+  })
+  approvedBy?: UserDocument
+
+  @Prop({
+    default: null,
+  })
+  approvedAt?: Date
 
   @Prop({
     type: [{ type: Types.ObjectId, ref: 'reply' }],
@@ -39,4 +51,14 @@ LikeFactory(ReplySchema)
 
 ReplySchema.virtual('repliesCount').get(function(this: Reply) {
   return this.replies.length
+})
+
+ReplySchema.virtual('isApproved').get(function(this: Reply) {
+  return !!this.approvedBy
+})
+
+ReplySchema.pre('save', function(this: ReplyDocument, next: Function) {
+  if (this.isModified('approvedBy')) {
+    this.approvedAt = this.approvedBy === null ? null : new Date()
+  }
 })
